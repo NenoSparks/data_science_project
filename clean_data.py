@@ -14,7 +14,7 @@ def main():
     for filename in os.listdir(raw_data_path):
         print(filename)
         df = pd.read_csv(f'raw_data/{filename}', skiprows=1)
-        df = df[df['Value'].isnull()]
+        df = df[df['Value'].notnull()]
         
         # df_new.to_csv(f'{clean_data_path}/{filename}')
 
