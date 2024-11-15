@@ -1,27 +1,36 @@
-# python3 clean_data.py inputDirectory outputDirectory
+# python3 clean_data.py raw_hydrometric_data clean_hydrometric_data
 import os
 import sys
-import pandas as pd
+import csv
+import gzip
 
 
 def main():
     raw_data_path = sys.argv[1]
     clean_data_path = sys.argv[2]
+
+    # if the output directory does not exist, create one
     if not os.path.isdir(clean_data_path):
         os.makedirs(clean_data_path)
 
-    # TODO specify a schema so that we dont get a DtypeWawrning of columns having mixed types
-    for filename in os.listdir(raw_data_path):
-        print(filename)
-        df = pd.read_csv(f'raw_data/{filename}', skiprows=1)
-        df = df[df['Value'].notnull()]
-        
-        # df_new.to_csv(f'{clean_data_path}/{filename}')
+    firstFile = True
+    count = 0
+    with open(f'{clean_data_path}\\aggregateData.csv', 'w', newline='') as outfile:
+        writer = csv.writer(outfile, delimiter=',')
+        for filename in os.listdir(raw_data_path):
+            with open(f'{raw_data_path}\\{filename}', newline='') as infile:
+                if (firstFile):
+                    reader = list(csv.reader(infile))
+                    firstFile = False
+                else:
+                    reader = list(csv.reader(infile))[2:]
 
-    print(len(df))
+                print(f'Input file {filename} has {len(reader)} non-null rows.')
+                count += len(reader)
+                for row in reader:
+                    writer.writerow(row)
 
-    # concatenate all of my dataframes together and keep only the records from each station that have overlap in dates.
-    # for example, if my smallest date range is from 2015-2023, then I should take the subset of all other station records for dates 2015-2023
+    print(f'Total lines of non-null input data: {count}')
 
 
 if __name__=='__main__':
