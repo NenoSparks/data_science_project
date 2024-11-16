@@ -78,12 +78,57 @@ def main():
     # TODO combine data_df with meta_df so each station has lat/long as well as additional values
     combined_df = data_df.merge(meta_df, on="Station ID", sort=True)
 
-    
-    # TODO pivot into correct table format
-    # TODO drop rows with not enough data, then find the longest continuous data range
-    
+    # do some manual filtering of stations with data over too small a period of time
+    combined_data = combined_data[combined_data['Station ID'] != '08GA026']
+    combined_data = combined_data[combined_data['Station ID'] != '08HE001']
+    combined_data = combined_data[combined_data['Station ID'] != '08LG070']
+    combined_data = combined_data[combined_data['Station ID'] != '08LF023']
+    combined_data = combined_data[combined_data['Station ID'] != '08KE018']
+    combined_data = combined_data[combined_data['Station ID'] != '08ND021']
+    combined_data = combined_data[combined_data['Station ID'] != '08MF035']
+    combined_data = combined_data[combined_data['Station ID'] != '08CE005']
+    combined_data = combined_data[combined_data['Station ID'] != '07ED001']
+    combined_data = combined_data[combined_data['Station ID'] != '08GD010']
+    combined_data = combined_data[combined_data['Station ID'] != '08MG028']
+    combined_data = combined_data[combined_data['Station ID'] != '08NK030']
+    combined_data = combined_data[combined_data['Station ID'] != '09AA006']
+    combined_data = combined_data[combined_data['Station ID'] != '08LF033']
+    combined_data = combined_data[combined_data['Station ID'] != '08HD035']
+    combined_data = combined_data[combined_data['Station ID'] != '08FA002']
+    combined_data = combined_data[combined_data['Station ID'] != '08MD013']
+    combined_data = combined_data[combined_data['Station ID'] != '08KH001']
+    combined_data = combined_data[combined_data['Station ID'] != '08PA012']
+    combined_data = combined_data[combined_data['Station ID'] != '08LD001']
+    combined_data = combined_data[combined_data['Station ID'] != '08EG012']
+    combined_data = combined_data[combined_data['Station ID'] != '08EG019']
+    combined_data = combined_data[combined_data['Station ID'] != '07FC003']
+    combined_data = combined_data[combined_data['Station ID'] != '08NP003']
+    combined_data = combined_data[combined_data['Station ID'] != '07FD019']
+    combined_data = combined_data[combined_data['Station ID'] != '08LF094']
+    combined_data = combined_data[combined_data['Station ID'] != '10CD004']
+    combined_data = combined_data[combined_data['Station ID'] != '08NM146']
+    combined_data = combined_data[combined_data['Station ID'] != '08KE024']
+    combined_data = combined_data[combined_data['Station ID'] != '08LG056']
+    combined_data = combined_data[combined_data['Station ID'] != '08KH019']
+    combined_data = combined_data[combined_data['Station ID'] != '08KA009']
+    combined_data = combined_data[combined_data['Station ID'] != '08KH010']
+    combined_data = combined_data[combined_data['Station ID'] != '10CD005']
+    combined_data = combined_data[combined_data['Station ID'] != '07FC001']
+    combined_data = combined_data[combined_data['Station ID'] != '08MF005']
 
-    # TODO join data with climate data
+    # TODO Check for continuity within our dates, decide how to fill in missing values
+    
+    # pivot_data = ['Daily Discharge','SYM1','Daily Water Level','SYM2','Station Name',
+    #                  'Province','Status','Latitude','Longitude','Year From','Year To',
+    #                  'Gross Drainage Area (km2)','Effective Drainage Area (km2)',
+    #                  'Data Type']
+    # # TODO pivot into correct table format
+    # pivot_df = combined_df.pivot(columns="Station ID", index="Date")
+    # print(pivot_df.head())
+    # # TODO drop rows with not enough data, then find the longest continuous data range
+    # pivot_df.dropna(axis=0, how='all', inplace=True)
+
+    # # TODO join data with climate data
 
 
 
