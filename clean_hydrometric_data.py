@@ -76,7 +76,8 @@ def main():
     meta_df.rename(columns={"Station Number":"Station ID"}, inplace=True)
 
     # TODO combine data_df with meta_df so each station has lat/long as well as additional values
-    combined_df = data_df.merge(meta_df, on="Station ID", sort=True)
+    combined_data = data_df.merge(meta_df, on="Station ID", sort=True)
+    combined_data.to_csv("combined_data.csv", index=False)
 
     # do some manual filtering of stations with data over too small a period of time
     combined_data = combined_data[combined_data['Station ID'] != '08GA026']
@@ -116,24 +117,30 @@ def main():
     combined_data = combined_data[combined_data['Station ID'] != '07FC001']
     combined_data = combined_data[combined_data['Station ID'] != '08MF005']
 
-    # TODO Check for continuity within our dates, decide how to fill in missing values
+    # TODO before pivot, get rid of some more useless columns
+    columns = ['Date','Station ID','Station Name','Province','Latitude','Longitude','Daily Discharge',
+            'SYM1','Daily Water Level','SYM2']
+    combined_data = combined_data[columns]
+
+    # TODO convert 'Date' to DateTime objects
+    combined_data['Date'] = pd.to_datetime(combined_data['Date'], format='%Y/%m/%d')
+
+    # TODO pivot into correct table format
+    pivot_df = combined_data.pivot(columns="Station ID", index="Date")
+
+
+    # # TODO Check for continuity within our dates, decide how to fill in missing values
+    date_range = pd.date_range(start="1/1/2013", end="12/31/2023")
+    # make the index the complete date range we are interested in
+    pivot_df = pivot_df.reindex(date_range)
     
-    # pivot_data = ['Daily Discharge','SYM1','Daily Water Level','SYM2','Station Name',
-    #                  'Province','Status','Latitude','Longitude','Year From','Year To',
-    #                  'Gross Drainage Area (km2)','Effective Drainage Area (km2)',
-    #                  'Data Type']
-    # # TODO pivot into correct table format
-    # pivot_df = combined_df.pivot(columns="Station ID", index="Date")
-    # print(pivot_df.head())
-    # # TODO drop rows with not enough data, then find the longest continuous data range
-    # pivot_df.dropna(axis=0, how='all', inplace=True)
 
     # # TODO join data with climate data
 
 
 
-
-    combined_df.to_csv("combined_data.csv", index=False)
+    pivot_df = pivot_df.reset_index(names="Date")
+    pivot_df.to_csv("pivot_data.csv", index=False)
 
 if __name__=='__main__':
     main()
