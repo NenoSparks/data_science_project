@@ -124,6 +124,7 @@ def main():
 
     # TODO convert 'Date' to DateTime objects
     combined_data['Date'] = pd.to_datetime(combined_data['Date'], format='%Y/%m/%d')
+    combined_data.to_csv("clean_hydrometric_data.csv", index=False)
 
     # TODO pivot into correct table format
     pivot_df = combined_data.pivot(columns="Station ID", index="Date")
