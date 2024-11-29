@@ -1,4 +1,4 @@
-# python3 clean_data.py raw_hydrometric_data clean_hydrometric_data
+# python clean_hydrometric_data.py raw_hydrometric_data clean_hydrometric_data
 import os
 import sys
 import csv
@@ -46,10 +46,7 @@ def main():
     # get rid of the annoying ' ID' column header
     data_df.rename(columns={" ID":"Station ID"}, inplace=True)
 
-    # TODO filter all of the rows of data_df that have more than threshold null values/ less than threshold nonnull values
-    data_df = data_df[data_df['Value'].notnull()]
-
-    # TODO split into two dataframes, PARAM=1 and PARAM=2. Then join the two dataframes
+    # Split into two dataframes, PARAM=1 and PARAM=2. Then join the two dataframes
     # rename into 1: Daily Discharge (m3/s) and 2: Daily Water Level (m)
     data_df1 = data_df[data_df['PARAM'] == 1]
     data_df1 = data_df1[['Station ID','Date','Value','SYM']]
@@ -59,6 +56,25 @@ def main():
     data_df2.rename(columns={"Value":"Daily Water Level","SYM":"SYM2"}, inplace=True)
 
     data_df = pd.merge(data_df1, data_df2, on=["Station ID", "Date"])
+
+    valid_stations = []
+    # iterate over the possible stations
+    stations = data_df["Station ID"].unique()
+    for station in stations:
+        station_df = data_df[data_df["Station ID"] == station]
+        # Adapted from user EdChum's answer on stackoverflow
+        # Reference: https://stackoverflow.com/questions/29007830/identifying-consecutive-nans-with-pandas
+        consecutive_count_1 = station_df["Daily Discharge"].isnull().astype(int).groupby(station_df["Daily Discharge"].notnull().astype(int).cumsum()).sum()
+        consecutive_count_2 = station_df["Daily Water Level"].isnull().astype(int).groupby(station_df["Daily Water Level"].notnull().astype(int).cumsum()).sum()
+
+        # if we're missing more than 7 days in a row, filter out that station
+        if (consecutive_count_1.max() >= 7) or (consecutive_count_2.max() >= 7):
+            continue
+        else:
+            valid_stations.append(station)
+
+    # filter out the datapoints only form valid stations
+    data_df = data_df[data_df['Station ID'].isin(valid_stations)]
 
     # Our data at this point has to form |Station ID|PARAM|Date|Value|SYM|
     # However, 'stationID' is an internal numbering with no meaning. Our weather data is going to
@@ -75,62 +91,34 @@ def main():
     # change header "Station Number" -> "Station ID"
     meta_df.rename(columns={"Station Number":"Station ID"}, inplace=True)
 
-    # TODO combine data_df with meta_df so each station has lat/long as well as additional values
+    # Combine data_df with meta_df so each station has lat/long as well as additional values
     combined_data = data_df.merge(meta_df, on="Station ID", sort=True)
-    combined_data.to_csv("combined_data.csv", index=False)
 
-    # do some manual filtering of stations with data over too small a period of time
-    combined_data = combined_data[combined_data['Station ID'] != '08GA026']
-    combined_data = combined_data[combined_data['Station ID'] != '08HE001']
-    combined_data = combined_data[combined_data['Station ID'] != '08LG070']
-    combined_data = combined_data[combined_data['Station ID'] != '08LF023']
-    combined_data = combined_data[combined_data['Station ID'] != '08KE018']
-    combined_data = combined_data[combined_data['Station ID'] != '08ND021']
-    combined_data = combined_data[combined_data['Station ID'] != '08MF035']
-    combined_data = combined_data[combined_data['Station ID'] != '08CE005']
-    combined_data = combined_data[combined_data['Station ID'] != '07ED001']
-    combined_data = combined_data[combined_data['Station ID'] != '08GD010']
-    combined_data = combined_data[combined_data['Station ID'] != '08MG028']
-    combined_data = combined_data[combined_data['Station ID'] != '08NK030']
-    combined_data = combined_data[combined_data['Station ID'] != '09AA006']
-    combined_data = combined_data[combined_data['Station ID'] != '08LF033']
-    combined_data = combined_data[combined_data['Station ID'] != '08HD035']
-    combined_data = combined_data[combined_data['Station ID'] != '08FA002']
-    combined_data = combined_data[combined_data['Station ID'] != '08MD013']
-    combined_data = combined_data[combined_data['Station ID'] != '08KH001']
-    combined_data = combined_data[combined_data['Station ID'] != '08PA012']
-    combined_data = combined_data[combined_data['Station ID'] != '08LD001']
-    combined_data = combined_data[combined_data['Station ID'] != '08EG012']
-    combined_data = combined_data[combined_data['Station ID'] != '08EG019']
-    combined_data = combined_data[combined_data['Station ID'] != '07FC003']
-    combined_data = combined_data[combined_data['Station ID'] != '08NP003']
-    combined_data = combined_data[combined_data['Station ID'] != '07FD019']
-    combined_data = combined_data[combined_data['Station ID'] != '08LF094']
-    combined_data = combined_data[combined_data['Station ID'] != '10CD004']
-    combined_data = combined_data[combined_data['Station ID'] != '08NM146']
-    combined_data = combined_data[combined_data['Station ID'] != '08KE024']
-    combined_data = combined_data[combined_data['Station ID'] != '08LG056']
-    combined_data = combined_data[combined_data['Station ID'] != '08KH019']
-    combined_data = combined_data[combined_data['Station ID'] != '08KA009']
-    combined_data = combined_data[combined_data['Station ID'] != '08KH010']
-    combined_data = combined_data[combined_data['Station ID'] != '10CD005']
-    combined_data = combined_data[combined_data['Station ID'] != '07FC001']
-    combined_data = combined_data[combined_data['Station ID'] != '08MF005']
-
-    # TODO before pivot, get rid of some more useless columns
+    # Before save, get rid of some more useless columns
     columns = ['Date','Station ID','Station Name','Province','Latitude','Longitude','Daily Discharge',
             'SYM1','Daily Water Level','SYM2']
     combined_data = combined_data[columns]
 
-    # TODO convert 'Date' to DateTime objects
-    combined_data['Date'] = pd.to_datetime(combined_data['Date'], format='%Y/%m/%d')
-    combined_data.to_csv("clean_hydrometric_data.csv", index=False)
+    # Before pivot, get rid of some more useless columns
+    columns = ['Date','Station ID','Station Name','Province','Latitude','Longitude','Daily Discharge',
+            'SYM1','Daily Water Level','SYM2']
+    combined_data = combined_data[columns]
 
-    # TODO pivot into correct table format
+    # remove dates outside of 2013/01/01 - 2023/12/31
+    minDate = pd.Timestamp('2013-01-01')
+    maxDate = pd.Timestamp('2023-12-31')
+    combined_data["Date"] = pd.to_datetime(combined_data["Date"])
+    station_df = combined_data.groupby("Station ID").agg({"Date":["min","max"]})
+    station_df = station_df[station_df["Date"]["min"] <= minDate]
+    station_df = station_df[station_df["Date"]["max"] >= maxDate]
+
+    combined_data.to_csv("clean_hydrometric_data/clean_hydrometric_data.csv", index=False)
+
+    # Pivot to get Date as index and columns organized by station id for each feature
     pivot_df = combined_data.pivot(columns="Station ID", index="Date")
 
 
-    # # TODO Check for continuity within our dates, decide how to fill in missing values
+    # Check for continuity within our dates, decide how to fill in missing values
     date_range = pd.date_range(start="1/1/2013", end="12/31/2023")
     # make the index the complete date range we are interested in
     pivot_df = pivot_df.reindex(date_range)
