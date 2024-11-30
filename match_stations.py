@@ -1,4 +1,4 @@
-# python match_stations.py clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv clean_hydrometric_data.csv
+# python match_stations.py clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv clean_hydrometric_data/clean_hydrometric_data.csv
 # take the weather station data and hydrometric station data as arguments
 import numpy as np
 import pandas as pd

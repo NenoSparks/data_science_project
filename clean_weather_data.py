@@ -84,8 +84,33 @@ def main():
     aggregated_weather_data = aggregated_weather_data.apply(fill_in_missing_temperatures, axis=1)
 
     # Drops rows with any null value(s)
-    aggregated_weather_data_ver1 = aggregated_weather_data.dropna()
-    aggregated_weather_data_ver2 = aggregated_weather_data[indexes_ver2].dropna()
+    # TODO: commented out temporarily
+    # aggregated_weather_data_ver1 = aggregated_weather_data.dropna()
+    # aggregated_weather_data_ver2 = aggregated_weather_data[indexes_ver2].dropna()
+
+    # Drop stations with too many consecutive null values
+    valid_stations = []
+    # iterate over the possible stations
+    stations = aggregated_weather_data["STATION_NAME"].unique()
+    for station in stations:
+        station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
+        # Adapted from user EdChum's answer on stackoverflow
+        # Reference: https://stackoverflow.com/questions/29007830/identifying-consecutive-nans-with-pandas
+        consecutive_count_1 = station_df["TOTAL_PRECIPITATION"].isnull().astype(int).groupby(station_df["TOTAL_PRECIPITATION"].notnull().astype(int).cumsum()).sum()
+        consecutive_count_2 = station_df["TOTAL_RAIN"].isnull().astype(int).groupby(station_df["TOTAL_RAIN"].notnull().astype(int).cumsum()).sum()
+        consecutive_count_3 = station_df["TOTAL_SNOW"].isnull().astype(int).groupby(station_df["TOTAL_SNOW"].notnull().astype(int).cumsum()).sum()
+        consecutive_count_4 = station_df["SNOW_ON_GROUND"].isnull().astype(int).groupby(station_df["SNOW_ON_GROUND"].notnull().astype(int).cumsum()).sum()
+        # if we're missing more than 7 days in a row, filter out that station
+        if (consecutive_count_1.max() >= 7) and ((consecutive_count_2.max() >= 7) or(consecutive_count_3.max() >= 7)):
+            continue
+        # TODO can comment this conditional out if we decide not to use "SNOW_ON_GROUND" column
+        elif (consecutive_count_4.max() >= 14):
+            continue
+        else:
+            valid_stations.append(station)
+
+    # filter out the datapoints only form valid stations
+    aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(valid_stations)]
 
     # Prints out information about the dataframes
     # summary(aggregated_weather_data)
@@ -94,8 +119,8 @@ def main():
 
     # Exports dataframes into CSV files
     aggregated_weather_data.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv', index=False)
-    aggregated_weather_data_ver1.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver1.csv', index=False)
-    aggregated_weather_data_ver2.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver2.csv', index=False)
+    # aggregated_weather_data_ver1.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver1.csv', index=False)
+    # aggregated_weather_data_ver2.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver2.csv', index=False)
 
 
 if __name__ == '__main__':
