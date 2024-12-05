@@ -117,6 +117,8 @@ def main():
     # Fills in missing data in the four precipitation columns using the last valid data point
     aggregated_weather_data = aggregated_weather_data.ffill(axis=1)
 
+    # Convert "LOCAL_DATE" column to datetime
+    aggregated_weather_data["LOCAL_DATE"] = pd.to_datetime(aggregated_weather_data["LOCAL_DATE"])
     # Prints out information about the dataframes
     # summary(aggregated_weather_data)
 
