@@ -74,6 +74,8 @@ def main():
     # valid_weather_df = valid_weather_df.replace({"match key": weather_to_match_key})
     # valid_station_df = valid_station_df.replace({"match key": hydro_to_match_key})
 
+    # clean up some of the column headers so they match up nicely
+    valid_weather_df.rename(columns={"STATION_NAME":"Station Name", "LOCAL_DATE":"Date"}, inplace=True)
     # if directory /valid_data does not already exist, create it
     if not os.path.isdir("valid_data"):
         os.makedirs("valid_data")
