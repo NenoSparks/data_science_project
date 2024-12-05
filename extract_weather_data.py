@@ -9,7 +9,9 @@ def main():
         file_Path = 'raw_bc_daily_weather_data/bc_daily_weather_data_' + str(i) + ".csv"
 
         urllib.request.urlretrieve(url, file_Path)
-        print("Downloaded lines " + str(100000 * i) + " to " + str(100000 + (100000 * i)))
+        print("[INFO] Downloaded lines " + str(100000 * i) + " to " + str(100000 + (100000 * i)))
+
+    print("[INFO] Done extracting weather data.")
 
 
 if __name__ == "__main__":

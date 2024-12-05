@@ -46,7 +46,7 @@ def main():
                          'raw_bc_daily_weather_data/bc_daily_weather_data_7.csv',
                          'raw_bc_daily_weather_data/bc_daily_weather_data_8.csv']
 
-    indexes_ver1 = ['STATION_NAME',
+    indexes = ['STATION_NAME',
                     'y',
                     'x',
                     'LOCAL_DATE',
@@ -58,22 +58,13 @@ def main():
                     'TOTAL_SNOW',
                     'SNOW_ON_GROUND']
 
-    indexes_ver2 = ['STATION_NAME',
-                    'Latitude',
-                    'Longitude',
-                    'LOCAL_DATE',
-                    'MIN_TEMPERATURE',
-                    'MAX_TEMPERATURE',
-                    'MEAN_TEMPERATURE',
-                    'TOTAL_PRECIPITATION']
-
     aggregated_weather_data = aggregate_raw_data(weather_filenames)
-    aggregated_weather_data = aggregated_weather_data[indexes_ver1]
+    aggregated_weather_data = aggregated_weather_data[indexes]
     aggregated_weather_data = aggregated_weather_data.rename(columns={'y': 'Latitude', 'x': 'Longitude'})
     aggregated_weather_data = aggregated_weather_data.sort_values(['STATION_NAME', 'LOCAL_DATE'],
                                                                   ascending=[True, True])
 
-    # Drops rows were more than one temperature value is missing (AKA we cannot calculate the missing temperature values)
+    # Drops rows where more than one temperature value is missing (AKA we cannot calculate the missing temperature values)
     aggregated_weather_data = aggregated_weather_data.dropna(
         subset=['MIN_TEMPERATURE', 'MAX_TEMPERATURE', 'MEAN_TEMPERATURE'], how='all')
     aggregated_weather_data = aggregated_weather_data.dropna(subset=['MIN_TEMPERATURE', 'MAX_TEMPERATURE'], how='all')
@@ -83,14 +74,8 @@ def main():
     # Fills in missing mean temperatures
     aggregated_weather_data = aggregated_weather_data.apply(fill_in_missing_temperatures, axis=1)
 
-    # Drops rows with any null value(s)
-    # TODO: commented out temporarily
-    # aggregated_weather_data_ver1 = aggregated_weather_data.dropna()
-    # aggregated_weather_data_ver2 = aggregated_weather_data[indexes_ver2].dropna()
-
-    # Drop stations with too many consecutive null values
+    # Iterates over the possible stations and drop stations with too many consecutive null values
     valid_stations = []
-    # iterate over the possible stations
     stations = aggregated_weather_data["STATION_NAME"].unique()
     for station in stations:
         station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
@@ -100,27 +85,43 @@ def main():
         consecutive_count_2 = station_df["TOTAL_RAIN"].isnull().astype(int).groupby(station_df["TOTAL_RAIN"].notnull().astype(int).cumsum()).sum()
         consecutive_count_3 = station_df["TOTAL_SNOW"].isnull().astype(int).groupby(station_df["TOTAL_SNOW"].notnull().astype(int).cumsum()).sum()
         consecutive_count_4 = station_df["SNOW_ON_GROUND"].isnull().astype(int).groupby(station_df["SNOW_ON_GROUND"].notnull().astype(int).cumsum()).sum()
-        # if we're missing more than 7 days in a row, filter out that station
-        if (consecutive_count_1.max() >= 7) and ((consecutive_count_2.max() >= 7) or(consecutive_count_3.max() >= 7)):
+        # If we're missing more than 7 days in a row, filter out that station
+        if (consecutive_count_1.max() >= 7) and ((consecutive_count_2.max() >= 7) or (consecutive_count_3.max() >= 7)):
             continue
-        # TODO can comment this conditional out if we decide not to use "SNOW_ON_GROUND" column
         elif (consecutive_count_4.max() >= 14):
             continue
         else:
             valid_stations.append(station)
 
-    # filter out the datapoints only form valid stations
+    # Filter outs the datapoints only from valid stations
     aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(valid_stations)]
+
+    # Iterates over the possible stations and drop stations with more than 30% missing data
+    filtered_valid_stations = []
+    for station in valid_stations:
+        station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
+
+        precipitation_null_row_count = station_df["TOTAL_PRECIPITATION"].isnull().sum(axis = 0)
+        rain_null_row_count = station_df["TOTAL_RAIN"].isnull().sum(axis = 0)
+        snow_null_row_count = station_df["TOTAL_SNOW"].isnull().sum(axis = 0)
+        snow_on_ground_null_row_count = station_df["SNOW_ON_GROUND"].isnull().sum(axis = 0)
+
+        if (precipitation_null_row_count / len(station_df) > 0.3) or (rain_null_row_count / len(station_df) > 0.3) or (snow_null_row_count / len(station_df) > 0.3) or (snow_on_ground_null_row_count / len(station_df) > 0.3):
+            continue
+        else:
+            filtered_valid_stations.append(station)
+
+    # Filters out the datapoints only from valid stations
+    aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(filtered_valid_stations)]
+
+    # Fills in missing data in the four precipitation columns using the last valid data point
+    aggregated_weather_data = aggregated_weather_data.ffill(axis=1)
 
     # Prints out information about the dataframes
     # summary(aggregated_weather_data)
-    # summary(aggregated_weather_data_ver1)
-    # summary(aggregated_weather_data_ver2)
 
     # Exports dataframes into CSV files
     aggregated_weather_data.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv', index=False)
-    # aggregated_weather_data_ver1.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver1.csv', index=False)
-    # aggregated_weather_data_ver2.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver2.csv', index=False)
 
 
 if __name__ == '__main__':

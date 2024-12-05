@@ -7,7 +7,7 @@ from plotly.subplots import make_subplots
 import sys
 
 def main():
-    # weather_df = pd.read_csv("clean_bc_daily_weather_data/clean_bc_daily_weather_data_ver2.csv")
+    # weather_df = pd.read_csv("clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv")
     # hydrometric_df = pd.read_csv("combined_data.csv")
     # wstations_df = weather_df.groupby("STATION_NAME").agg({"Latitude":"mean", "Longitude":"mean"})
     # hstations_df = hydrometric_df.groupby("Station Name").agg({"Latitude":"mean", "Longitude":"mean"})
