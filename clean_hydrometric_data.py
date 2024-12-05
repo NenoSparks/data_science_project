@@ -16,7 +16,7 @@ def aggregateData(raw_data_path, clean_data_path):
 
     firstFile = True
     count = 0
-    with open(f'{clean_data_path}\\aggregateData.csv', 'w', newline='') as outfile:
+    with open(f'{clean_data_path}\\rawAggregateData.csv', 'w', newline='') as outfile:
         writer = csv.writer(outfile, delimiter=',')
         for filename in os.listdir(raw_data_path):
             with open(f'{raw_data_path}\\{filename}', newline='') as infile:
@@ -42,7 +42,7 @@ def main():
     aggregateData(raw_data_path, clean_data_path)
 
     # read our data into a dataframe
-    data_df = pd.read_csv("clean_hydrometric_data/aggregateData.csv", skiprows=1, dtype={' ID':'str'})
+    data_df = pd.read_csv("clean_hydrometric_data/rawAggregateData.csv", skiprows=1, dtype={' ID':'str'})
     # get rid of the annoying ' ID' column header
     data_df.rename(columns={" ID":"Station ID"}, inplace=True)
 
