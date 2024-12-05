@@ -111,25 +111,41 @@ def main():
     station_df = combined_data.groupby("Station ID").agg({"Date":["min","max"]})
     station_df = station_df[station_df["Date"]["min"] <= minDate]
     station_df = station_df[station_df["Date"]["max"] >= maxDate]
+    
+    # get only the data from stations with enough data to cover our date range
+    combined_data = combined_data[combined_data["Station ID"].isin(list(station_df.index))]
+
+    # use a boolean mask to get just the rows within our date range
+    # credit: unutbu on stackoverflow https://stackoverflow.com/questions/29370057/select-dataframe-rows-between-two-dates
+    mask = (combined_data['Date'] >= minDate) & (combined_data['Date'] <= maxDate)
+    combined_data = combined_data.loc[mask]
+
+    # fill in missing NaN values 
+    # Note: we decided it would be okay to fill in missing values by propogating the last
+    # valid observation to the next valid since we limited our data to have at most 7
+    # consecutive days of missing values.
+
 
     combined_data.to_csv("clean_hydrometric_data/clean_hydrometric_data.csv", index=False)
 
-    # Pivot to get Date as index and columns organized by station id for each feature
-    pivot_df = combined_data.pivot(columns="Station ID", index="Date")
+
+    # # TODO should likely be a separte script to combine data together and get it into a format for ML
+    # # Pivot to get Date as index and columns organized by station id for each feature
+    # pivot_df = combined_data.pivot(columns="Station ID", index="Date")
 
 
-    # Check for continuity within our dates, decide how to fill in missing values
-    date_range = pd.date_range(start="1/1/2013", end="12/31/2023")
-    # make the index the complete date range we are interested in
-    pivot_df = pivot_df.reindex(date_range)
+    # # Check for continuity within our dates, decide how to fill in missing values
+    # date_range = pd.date_range(start="1/1/2013", end="12/31/2023")
+    # # make the index the complete date range we are interested in
+    # pivot_df = pivot_df.reindex(date_range)
     
 
-    # # TODO join data with climate data
+    # # # TODO join data with climate data
 
 
 
-    pivot_df = pivot_df.reset_index(names="Date")
-    pivot_df.to_csv("pivot_data.csv", index=False)
+    # pivot_df = pivot_df.reset_index(names="Date")
+    # pivot_df.to_csv("pivot_data.csv", index=False)
 
 if __name__=='__main__':
     main()
