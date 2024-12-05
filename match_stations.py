@@ -40,7 +40,7 @@ def main():
         h = tuple(hstations_df.loc[h_station, ['Latitude','Longitude']].values)
         for w_station in wstations_df.index:
             w = tuple(wstations_df.loc[w_station, ['Latitude','Longitude']].values)
-            if distance(h, w) < 10:
+            if distance(h, w) < 8:
                 valid_h_stations.append(h_station)
                 valid_w_stations.append(w_station)
                 # once we find a single match per hydrometric station move onto the next one
@@ -51,13 +51,28 @@ def main():
     # TODO create dictionary to convert weather station names to hydrometric station names
     # then change all of the names in the clean weather station data and filter for any rows that
     # aren't from the desired station
-    
-    weather_to_hydro_dict = dict(zip(valid_w_stations, valid_h_stations))
-    hydro_to_weather_dict = dict(zip(valid_h_stations, valid_w_stations))
+
+    # key values to match on 
+    keys = np.arange(len(valid_h_stations))
+    # map each of the stations that matched with each other to the same key value
+    weather_to_match_key = dict(zip(valid_w_stations, keys))
+    hydro_to_match_key = dict(zip(valid_h_stations, keys))
 
     # get the rest of the data associated with valid stations
     valid_weather_df = weather_df[weather_df["STATION_NAME"].isin(valid_w_stations)]
     valid_station_df = hydrom_df[hydrom_df["Station Name"].isin(valid_h_stations)]
+
+    # TODO Need to be careful doing this since there are often more weather stations than hydro stations in a given
+    # area!
+    # valid_weather_df = valid_weather_df.replace({"STATION_NAME": weather_to_hydro_dict})
+
+    # TODO instead of changing the name of the weather station (less accurate, prone to compatability issues down the line)
+    # just add a new column to each dataframe to signify how they should be matched up,
+    # a 'key' value.
+    valid_weather_df["match key"] = valid_weather_df["STATION_NAME"].map(weather_to_match_key)
+    valid_station_df["match key"] = valid_station_df["Station Name"].map(hydro_to_match_key)
+    # valid_weather_df = valid_weather_df.replace({"match key": weather_to_match_key})
+    # valid_station_df = valid_station_df.replace({"match key": hydro_to_match_key})
 
     # if directory /valid_data does not already exist, create it
     if not os.path.isdir("valid_data"):
