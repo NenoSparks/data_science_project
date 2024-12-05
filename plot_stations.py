@@ -21,7 +21,7 @@ def main():
 
     lat1 = wstations_df['Latitude']
     lon1 = wstations_df['Longitude']
-    names1 = list(weather_df["STATION_NAME"])
+    names1 = list(weather_df["STATION_NAME"].unique())
 
     lat2 = hstations_df['Latitude']
     lon2 = hstations_df['Longitude']
