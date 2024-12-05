@@ -114,16 +114,25 @@ def main():
     # Filters out the datapoints only from valid stations
     aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(filtered_valid_stations)]
 
-    # Fills in missing data in the four precipitation columns using the last valid data point
-    aggregated_weather_data = aggregated_weather_data.ffill(axis=1)
+    date_range = pd.date_range(start='1/1/2013', end='12/31/2023', freq='D')
+    filled_in_aggregated_weather_data = pd.DataFrame()
+    for station in filtered_valid_stations:
+        station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
 
-    # Convert "LOCAL_DATE" column to datetime
-    aggregated_weather_data["LOCAL_DATE"] = pd.to_datetime(aggregated_weather_data["LOCAL_DATE"])
+        station_df.set_index('LOCAL_DATE', inplace=True)
+        station_df.index = pd.DatetimeIndex(station_df.index)
+        station_df = station_df.reindex(date_range).reset_index().rename(columns={"index": "LOCAL_DATE"})
+
+        # Fills in missing data using the last valid data point
+        station_df = station_df.ffill()
+
+        filled_in_aggregated_weather_data = pd.concat([filled_in_aggregated_weather_data, station_df])
+
     # Prints out information about the dataframes
     # summary(aggregated_weather_data)
 
     # Exports dataframes into CSV files
-    aggregated_weather_data.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv', index=False)
+    filled_in_aggregated_weather_data.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv', index=False)
 
 
 if __name__ == '__main__':
