@@ -124,7 +124,7 @@ def main():
     # Note: we decided it would be okay to fill in missing values by propogating the last
     # valid observation to the next valid since we limited our data to have at most 7
     # consecutive days of missing values.
-    combined_data = combined_data.ffill(axis=1)
+    # combined_data = combined_data.ffill(axis=1)
 
 
     combined_data.to_csv("clean_hydrometric_data/clean_hydrometric_data.csv", index=False)
