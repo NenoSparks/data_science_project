@@ -114,6 +114,7 @@ def main():
     # Filters out the datapoints only from valid stations
     aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(filtered_valid_stations)]
 
+    # Fills in missing dates ranging between 1/1/2013 and 12/31/2023 for each station
     date_range = pd.date_range(start='1/1/2013', end='12/31/2023', freq='D')
     filled_in_aggregated_weather_data = pd.DataFrame()
     for station in filtered_valid_stations:
