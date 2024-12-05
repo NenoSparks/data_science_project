@@ -16,12 +16,12 @@ def main():
     weather_df = pd.read_csv(sys.argv[1])
     hydrometric_df = pd.read_csv(sys.argv[2])
     # get just the station and lat/lon
-    wstations_df = weather_df.groupby("STATION_NAME").agg({"Latitude":"mean", "Longitude":"mean"})
+    wstations_df = weather_df.groupby("Station Name").agg({"Latitude":"mean", "Longitude":"mean"})
     hstations_df = hydrometric_df.groupby("Station Name").agg({"Latitude":"mean", "Longitude":"mean"})
 
     lat1 = wstations_df['Latitude']
     lon1 = wstations_df['Longitude']
-    names1 = list(weather_df["STATION_NAME"].unique())
+    names1 = list(weather_df["Station Name"].unique())
 
     lat2 = hstations_df['Latitude']
     lon2 = hstations_df['Longitude']
