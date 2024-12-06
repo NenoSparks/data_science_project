@@ -104,7 +104,7 @@ def main():
             'SYM1','Daily Water Level','SYM2']
     combined_data = combined_data[columns]
 
-    # remove dates outside of 2013/01/01 - 2023/12/31
+    # remove dates that don't at least span 2013/01/01 - 2023/12/31
     minDate = pd.Timestamp('2013-01-01')
     maxDate = pd.Timestamp('2023-12-31')
     combined_data["Date"] = pd.to_datetime(combined_data["Date"])
