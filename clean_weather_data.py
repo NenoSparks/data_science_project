@@ -197,6 +197,31 @@ def main():
     # Prints out information about the dataframes
     # summary(final_aggregated_weather_data)
 
+    # drop any duplicates before saving
+    final_aggregated_weather_data = final_aggregated_weather_data.drop_duplicates()
+
+    # do a bit more manual cleaning once we've had a look at our data with explore.ipynb
+    grouped = final_aggregated_weather_data.groupby("STATION_NAME").count()
+    duplicate_stations = grouped[grouped["LOCAL_DATE"] != 4017].index
+    
+    # get data of duplicated stations
+    duplicate_data = final_aggregated_weather_data[final_aggregated_weather_data["STATION_NAME"].isin(duplicate_stations)]
+
+    # remove stations with duplicates from our dataframe
+    final_aggregated_weather_data[~final_aggregated_weather_data["STATION_NAME"].isin(duplicate_stations)]
+
+    # take the mean values from our stations with duplicate rows
+    for station in duplicate_stations:
+        temp = duplicate_data[duplicate_data['STATION_NAME'] == station]
+        unique = temp.groupby(["LOCAL_DATE","STATION_NAME","LATITUDE","LONGITUDE"]).agg({"MIN_TEMPERATURE":"mean",
+        "MAX_TEMPERATURE":"mean","MEAN_TEMPERATURE":"mean","TOTAL_PRECIPITATION":"mean","TOTAL_RAIN":"mean",
+        "TOTAL_SNOW":"mean","SNOW_ON_GROUND":"mean"})
+        unique = unique.reset_index()
+        final_aggregated_weather_data = pd.concat([final_aggregated_weather_data, unique])
+
+    # rename some of our columns to standardize before saving
+    final_aggregated_weather_data = final_aggregated_weather_data.rename(columns={"LOCAL_DATE":"Date",
+                            "STATION_NAME":"Station Name","LATITUDE":"Latitude","LONGITUDE":"Longitude"})
     # Exports dataframes into CSV files
     final_aggregated_weather_data.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv', index=False)
 

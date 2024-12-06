@@ -26,7 +26,7 @@ def main():
     hydrom_df = pd.read_csv(hydrom_data)
 
     # weather and hydrometric station location data
-    wstations_df = weather_df.groupby("STATION_NAME").agg({"Latitude":"mean", "Longitude":"mean"})
+    wstations_df = weather_df.groupby("Station Name").agg({"Latitude":"mean", "Longitude":"mean"})
     hstations_df = hydrom_df.groupby("Station Name").agg({"Latitude":"mean", "Longitude":"mean"})
 
     # names of valid weather stations
@@ -46,7 +46,8 @@ def main():
                 # once we find a single match per hydrometric station move onto the next one
                 break
     
-    
+    print(valid_h_stations)
+    print(valid_w_stations)
     assert len(valid_h_stations) == len(valid_w_stations)
     # TODO create dictionary to convert weather station names to hydrometric station names
     # then change all of the names in the clean weather station data and filter for any rows that
@@ -59,7 +60,7 @@ def main():
     hydro_to_match_key = dict(zip(valid_h_stations, keys))
 
     # get the rest of the data associated with valid stations
-    valid_weather_df = weather_df[weather_df["STATION_NAME"].isin(valid_w_stations)]
+    valid_weather_df = weather_df[weather_df["Station Name"].isin(valid_w_stations)]
     valid_station_df = hydrom_df[hydrom_df["Station Name"].isin(valid_h_stations)]
 
     # TODO Need to be careful doing this since there are often more weather stations than hydro stations in a given
@@ -69,13 +70,11 @@ def main():
     # TODO instead of changing the name of the weather station (less accurate, prone to compatability issues down the line)
     # just add a new column to each dataframe to signify how they should be matched up,
     # a 'key' value.
-    valid_weather_df["match key"] = valid_weather_df["STATION_NAME"].map(weather_to_match_key)
+    valid_weather_df["match key"] = valid_weather_df["Station Name"].map(weather_to_match_key)
     valid_station_df["match key"] = valid_station_df["Station Name"].map(hydro_to_match_key)
     # valid_weather_df = valid_weather_df.replace({"match key": weather_to_match_key})
     # valid_station_df = valid_station_df.replace({"match key": hydro_to_match_key})
 
-    # clean up some of the column headers so they match up nicely
-    valid_weather_df.rename(columns={"STATION_NAME":"Station Name", "LOCAL_DATE":"Date"}, inplace=True)
     # if directory /valid_data does not already exist, create it
     if not os.path.isdir("valid_data"):
         os.makedirs("valid_data")
