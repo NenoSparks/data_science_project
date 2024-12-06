@@ -60,25 +60,51 @@ def main():
 
     aggregated_weather_data = aggregate_raw_data(weather_filenames)
     aggregated_weather_data = aggregated_weather_data[indexes]
-    aggregated_weather_data = aggregated_weather_data.rename(columns={'y': 'Latitude', 'x': 'Longitude'})
+    aggregated_weather_data = aggregated_weather_data.rename(columns={'y': 'LATITUDE', 'x': 'LONGITUDE'})
     aggregated_weather_data = aggregated_weather_data.sort_values(['STATION_NAME', 'LOCAL_DATE'],
                                                                   ascending=[True, True])
 
+    # Drops duplicated rows for observations from the same station with the same date
+    aggregated_weather_data = aggregated_weather_data.drop_duplicates(subset=['LOCAL_DATE', 'STATION_NAME', 'LATITUDE', 'LONGITUDE'], keep='last')
+
+    # Gets all unique stations
+    all_stations = aggregated_weather_data[['STATION_NAME', 'LATITUDE', 'LONGITUDE']].drop_duplicates(subset=['STATION_NAME', 'LATITUDE', 'LONGITUDE'], keep='last').values.tolist()
+
+    # Filters out stations that don't span the date range from 01/01/2013 to 12/31/2023
+    stations = []
+    for station in all_stations:
+        station_df = aggregated_weather_data[(aggregated_weather_data["STATION_NAME"] == station[0]) & (aggregated_weather_data["LATITUDE"] == station[1]) & (aggregated_weather_data["LONGITUDE"] == station[2])]
+
+        if (station_df['LOCAL_DATE'].min() == pd.Timestamp('2013-01-01')) and (station_df['LOCAL_DATE'].max() == pd.Timestamp('2023-12-31')):
+            stations.append(station)
+
+    # Fills in missing dates ranging between 1/1/2013 and 12/31/2023 for each station
+    filled_in_aggregated_weather_data = pd.DataFrame()
+
+    date_range = pd.date_range(start='1/1/2013', end='12/31/2023', freq='D')
+    for station in stations:
+        station_df = aggregated_weather_data[(aggregated_weather_data["STATION_NAME"] == station[0]) & (aggregated_weather_data["LATITUDE"] == station[1]) & (aggregated_weather_data["LONGITUDE"] == station[2])]
+
+        station_df.set_index('LOCAL_DATE', inplace=True)
+        station_df.index = pd.DatetimeIndex(station_df.index)
+        station_df = station_df.reindex(date_range).reset_index().rename(columns={"index": "LOCAL_DATE"})
+
+        filled_in_aggregated_weather_data = pd.concat([filled_in_aggregated_weather_data, station_df])
+
     # Drops rows where more than one temperature value is missing (AKA we cannot calculate the missing temperature values)
-    aggregated_weather_data = aggregated_weather_data.dropna(
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data.dropna(
         subset=['MIN_TEMPERATURE', 'MAX_TEMPERATURE', 'MEAN_TEMPERATURE'], how='all')
-    aggregated_weather_data = aggregated_weather_data.dropna(subset=['MIN_TEMPERATURE', 'MAX_TEMPERATURE'], how='all')
-    aggregated_weather_data = aggregated_weather_data.dropna(subset=['MIN_TEMPERATURE', 'MEAN_TEMPERATURE'], how='all')
-    aggregated_weather_data = aggregated_weather_data.dropna(subset=['MAX_TEMPERATURE', 'MEAN_TEMPERATURE'], how='all')
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data.dropna(subset=['MIN_TEMPERATURE', 'MAX_TEMPERATURE'], how='all')
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data.dropna(subset=['MIN_TEMPERATURE', 'MEAN_TEMPERATURE'], how='all')
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data.dropna(subset=['MAX_TEMPERATURE', 'MEAN_TEMPERATURE'], how='all')
 
     # Fills in missing mean temperatures
-    aggregated_weather_data = aggregated_weather_data.apply(fill_in_missing_temperatures, axis=1)
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data.apply(fill_in_missing_temperatures, axis=1)
 
     # Iterates over the possible stations and drop stations with too many consecutive null values
     valid_stations = []
-    stations = aggregated_weather_data["STATION_NAME"].unique()
-    for station in stations:
-        station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
+    for station in valid_stations:
+        station_df = aggregated_weather_data[(aggregated_weather_data["STATION_NAME"] == station[0]) & (aggregated_weather_data["LATITUDE"] == station[1]) & (aggregated_weather_data["LONGITUDE"] == station[2])]
         # Adapted from user EdChum's answer on stackoverflow
         # Reference: https://stackoverflow.com/questions/29007830/identifying-consecutive-nans-with-pandas
         consecutive_count_1 = station_df["TOTAL_PRECIPITATION"].isnull().astype(int).groupby(station_df["TOTAL_PRECIPITATION"].notnull().astype(int).cumsum()).sum()
@@ -94,12 +120,12 @@ def main():
             valid_stations.append(station)
 
     # Filter outs the datapoints only from valid stations
-    aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(valid_stations)]
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data[(filled_in_aggregated_weather_data["STATION_NAME"].isin(stations[:0])) & (filled_in_aggregated_weather_data["LATITUDE"].isin(stations[:1])) & (filled_in_aggregated_weather_data["LONGITUDE"].isin(stations[:2]))]
 
     # Iterates over the possible stations and drop stations with more than 30% missing data
     filtered_valid_stations = []
-    for station in valid_stations:
-        station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
+    for station in filtered_valid_stations:
+        station_df = filled_in_aggregated_weather_data[(filled_in_aggregated_weather_data["STATION_NAME"] == station[0]) & (filled_in_aggregated_weather_data["LATITUDE"] == station[1]) & (filled_in_aggregated_weather_data["LONGITUDE"] == station[2])]
 
         precipitation_null_row_count = station_df["TOTAL_PRECIPITATION"].isnull().sum(axis = 0)
         rain_null_row_count = station_df["TOTAL_RAIN"].isnull().sum(axis = 0)
@@ -112,25 +138,13 @@ def main():
             filtered_valid_stations.append(station)
 
     # Filters out the datapoints only from valid stations
-    aggregated_weather_data = aggregated_weather_data[aggregated_weather_data['STATION_NAME'].isin(filtered_valid_stations)]
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data[(filled_in_aggregated_weather_data["STATION_NAME"] == station[0]) & (filled_in_aggregated_weather_data["LATITUDE"] == station[1]) & (filled_in_aggregated_weather_data["LONGITUDE"] == station[2])]
 
-    # Fills in missing dates ranging between 1/1/2013 and 12/31/2023 for each station
-    date_range = pd.date_range(start='1/1/2013', end='12/31/2023', freq='D')
-    filled_in_aggregated_weather_data = pd.DataFrame()
-    for station in filtered_valid_stations:
-        station_df = aggregated_weather_data[aggregated_weather_data["STATION_NAME"] == station]
-
-        station_df.set_index('LOCAL_DATE', inplace=True)
-        station_df.index = pd.DatetimeIndex(station_df.index)
-        station_df = station_df.reindex(date_range).reset_index().rename(columns={"index": "LOCAL_DATE"})
-
-        # Fills in missing data using the last valid data point
-        station_df = station_df.ffill()
-
-        filled_in_aggregated_weather_data = pd.concat([filled_in_aggregated_weather_data, station_df])
+    # Fills in missing data using the last valid data point
+    filled_in_aggregated_weather_data = filled_in_aggregated_weather_data.ffill()
 
     # Prints out information about the dataframes
-    # summary(aggregated_weather_data)
+    # summary(filled_in_aggregated_weather_data)
 
     # Exports dataframes into CSV files
     filled_in_aggregated_weather_data.to_csv('clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv', index=False)
