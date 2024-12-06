@@ -75,7 +75,7 @@ def main():
     for station in all_stations:
         station_df = aggregated_weather_data[(aggregated_weather_data["STATION_NAME"] == station[0]) & (aggregated_weather_data["LATITUDE"] == station[1]) & (aggregated_weather_data["LONGITUDE"] == station[2])]
 
-        if (station_df['LOCAL_DATE'].min() == pd.Timestamp('2013-01-01')) and (station_df['LOCAL_DATE'].max() == pd.Timestamp('2023-12-31')):
+        if (station_df['LOCAL_DATE'].min() <= pd.Timestamp('2013-01-01')) and (station_df['LOCAL_DATE'].max() >= pd.Timestamp('2023-12-31')):
             stations.append(station)
 
     # Filter outs the datapoints only from valid stations
