@@ -4,11 +4,8 @@ import sys
 import csv
 import pandas as pd
 
-# Date last modified:
-# Description:
-# Input:
-# Output:
-# Time Complexity:
+# Date last modified: 2024-12-06
+
 def aggregateData(raw_data_path, clean_data_path):
     # if the output directory does not exist, create one
     if not os.path.isdir(clean_data_path):
@@ -120,12 +117,14 @@ def main():
     mask = (combined_data['Date'] >= minDate) & (combined_data['Date'] <= maxDate)
     combined_data = combined_data.loc[mask]
 
+    # get just the data we need
+    combined_data = combined_data[["Date","Station ID","Station Name","Latitude","Longitude","Daily Discharge","Daily Water Level"]]
     # fill in missing NaN values 
     # Note: we decided it would be okay to fill in missing values by propogating the last
     # valid observation to the next valid since we limited our data to have at most 7
     # consecutive days of missing values.
-    # combined_data = combined_data.ffill(axis=1)
-
+    combined_data = combined_data.ffill(axis=1)
+    combined_data["Date"] = pd.to_datetime(combined_data["Date"])
 
     combined_data.to_csv("clean_hydrometric_data/clean_hydrometric_data.csv", index=False)
 

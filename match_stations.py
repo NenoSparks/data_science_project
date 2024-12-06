@@ -46,8 +46,8 @@ def main():
                 # once we find a single match per hydrometric station move onto the next one
                 break
     
-    print(valid_h_stations)
-    print(valid_w_stations)
+    # print(valid_h_stations)
+    # print(valid_w_stations)
     assert len(valid_h_stations) == len(valid_w_stations)
     # TODO create dictionary to convert weather station names to hydrometric station names
     # then change all of the names in the clean weather station data and filter for any rows that
