@@ -57,15 +57,16 @@ The following Python libraries are required:
 1. Run the file called _clean_weather_data.py_ with no input parameters.
 2. Check to see a folder with the clean data csv file has been created.
 
-### Step 3) Run 
+### Step 3) Run  _clean_hydrometric_data.py_
 
-**Expected Input:** N/A
+**Expected Input:** A folder called raw_hydrometric_data.py
 
-**Expected Output:** N/A
+**Expected Output:** A new folder called clean_hydrometric_data
 
 #### Instructions
 
-1. 
+1. Run _clean_hydrometric_data.py_ with raw_hydrometric_data as its first input parameter and clean_hydrometric_data as its second.
+2. Check to see that a folder has been created with clean_hydrometric_data.csv inside. There will also be a rawAggregateData.csv file inside, feel free to ignore it, it's just an intermediate file used by clean_hydrometric_data.py
 
 ---
 
