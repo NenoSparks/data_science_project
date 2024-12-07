@@ -1,4 +1,4 @@
-# [CMPT353 Project] Title
+# [CMPT353 Project] Predicting Future Floods in British Columbia
 
 For this project, we explored the daily weather and hydrometric data in British Columbia (BC) in order to determine if there are any relationships between the two datasets that would help predict areas that would be susceptible to flooding.
 
