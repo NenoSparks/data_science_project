@@ -33,7 +33,7 @@ For this project, we explored the daily weather and hydrometric data in British 
 
 ### Step 0) Install Python and Necessary Libraries
 
-In order to run the code in this project, you must have Python 3.12.4 or higher [Python](https://www.python.org/downloads/) installed on your computer.
+In order to run the code in this project, you must have [Python 3.12.4](https://www.python.org/downloads/) or higher installed on your computer.
 
 The following Python libraries are required:
 - [NumPy](https://numpy.org/install/)
