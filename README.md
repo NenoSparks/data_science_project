@@ -10,12 +10,12 @@ For this project, we explored the daily weather and hydrometric data in British 
    1. [Members](#members)
 2. [How to Run the Code](#how-to-run-the-code)
    1. [Step 0) Install Python and Necessary Libraries](#step-0-install-python-and-necessary-libraries)
-   2. [Step 1) Run _extract_weather_data.py_](#step-1-run-_extract_weather_datapy_)
-   3. [Step 2) Run _clean_weather_data.py_](#step-2-run-_clean_weather_datapy_)
-   4. [Step 3) Run _clean_hydrometric_data.py_](#step-3-run-_clean_hydrometric_datapy_)
-   5. [Step 4) Run _match_stations.py_](#step-4-run-_match_stationspy_-)
-   6. [Step 5) OPTIONAL Run _plot_stations.py_](#step-5-_optional_-run-_plot_stationspy_)
-   7. [Step 6) Run _analysis.py_](#step-6-run-_analysispy_)
+   2. [Step 1) Run _extract_weather_data.py_](#step-1-run-extract_weather_datapy)
+   3. [Step 2) Run _clean_weather_data.py_](#step-2-run-clean_weather_datapy)
+   4. [Step 3) Run _clean_hydrometric_data.py_](#step-3-run-clean_hydrometric_datapy)
+   5. [Step 4) Run _match_stations.py_](#step-4-run-match_stationspy)
+   6. [Step 5) OPTIONAL Run _plot_stations.py_](#step-5-optional-run-plot_stationspy)
+   7. [Step 6) Run _analysis.py_](#step-6-run-analysispy)
    8. [Extras](#extras)
 
 ---
@@ -39,7 +39,7 @@ The following Python libraries are required:
 - [NumPy](https://numpy.org/install/)
 - [pandas](https://pandas.pydata.org/docs/getting_started/install.html)
 
-### Step 1) Run _extract_weather_data.py_
+### Step 1) Run extract_weather_data.py
 
 **Expected Input:** N/A
 
@@ -50,7 +50,7 @@ The following Python libraries are required:
 1. Run the file called _extract_weather_data.py_ with no input parameters.
 2. Check to see a folder with the raw data csv files has been created.
 
-### Step 2) Run _clean_weather_data.py_
+### Step 2) Run clean_weather_data.py
 
 **Expected Input:** N/A
 
@@ -61,7 +61,7 @@ The following Python libraries are required:
 1. Run the file called _clean_weather_data.py_ with no input parameters.
 2. Check to see a folder with the clean data csv file has been created.
 
-### Step 3) Run _clean_hydrometric_data.py_
+### Step 3) Run clean_hydrometric_data.py
 
 **Command:** python clean_hydrometric_data.py raw_hydrometric_data clean_hydrometric_data
 
@@ -74,7 +74,7 @@ The following Python libraries are required:
 1. Run _clean_hydrometric_data.py_ with raw_hydrometric_data as its first input parameter and clean_hydrometric_data as its second.
 2. Check to see that a folder has been created with clean_hydrometric_data.csv inside. There will also be a rawAggregateData.csv file inside, feel free to ignore it, it's just an intermediate file used by clean_hydrometric_data.py
 
-### Step 4) Run _match_stations.py_ 
+### Step 4) Run match_stations.py
 
 **Command:** python match_stations.py clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv clean_hydrometric_data/clean_hydrometric_data.csv
 
@@ -82,7 +82,7 @@ The following Python libraries are required:
 
 **Expected Output:** Will output list of available match keys to the console.
 
-### Step 5) _OPTIONAL_ Run _plot_stations.py_
+### Step 5) OPTIONAL: Run plot_stations.py
 
 **Command:** python plot_stations.py valid_data/weather.csv valid_data/hydrometric.csv
 
@@ -90,7 +90,7 @@ The following Python libraries are required:
 
 **Expected Output:** A browser tab will open with a map of British Columbia as well points showing the location of matched weather and hydrometric stations. trace0 (red points) represent weather stations and trace1 (blue points) represent hydrometric stations. Feel free to zoom in and interact with the map, hover over points to view the station name as well as the latitude and longitude of the station.
 
-### Step 6) Run _analysis.py_
+### Step 6) Run analysis.py
 
 **Command:** python analysis.py 0 (or another valid match key)
 
