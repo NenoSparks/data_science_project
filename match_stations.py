@@ -55,6 +55,7 @@ def main():
 
     # key values to match on 
     keys = np.arange(len(valid_h_stations))
+    print("Available match keys: ", keys)
     # map each of the stations that matched with each other to the same key value
     weather_to_match_key = dict(zip(valid_w_stations, keys))
     hydro_to_match_key = dict(zip(valid_h_stations, keys))

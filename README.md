@@ -57,7 +57,9 @@ The following Python libraries are required:
 1. Run the file called _clean_weather_data.py_ with no input parameters.
 2. Check to see a folder with the clean data csv file has been created.
 
-### Step 3) Run  _clean_hydrometric_data.py_
+### Step 3) Run _clean_hydrometric_data.py_
+
+**Command:** python clean_hydrometric_data.py raw_hydrometric_data clean_hydrometric_data
 
 **Expected Input:** A folder called raw_hydrometric_data.py
 
@@ -68,8 +70,27 @@ The following Python libraries are required:
 1. Run _clean_hydrometric_data.py_ with raw_hydrometric_data as its first input parameter and clean_hydrometric_data as its second.
 2. Check to see that a folder has been created with clean_hydrometric_data.csv inside. There will also be a rawAggregateData.csv file inside, feel free to ignore it, it's just an intermediate file used by clean_hydrometric_data.py
 
----
+### Step 4) Run _match_stations.py_ 
 
-clean_data.py takes an input directory and output directory as arguments. It will filter for valid input rows, then aggregate all valid rows from all input files into a single csv file output into the output directory.
+**Command:** python match_stations.py clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv clean_hydrometric_data/clean_hydrometric_data.csv
 
-Include how/where we downloaded the raw hydrometric data and raw climate data
+**Expected Input:** Two input files: clean_bc_daily_weather_data/clean_bc_daily_weather_data.csv & clean_hydrometric_data/clean_hydrometric_data.csv
+
+**Expected Output:** Will output list of available match keys to the console.
+
+## Step 5) _OPTIONAL_ Run _plot_stations.py_
+
+**Command:** python plot_stations.py valid_data/weather.csv valid_data/hydrometric.csv
+
+**Expected Input:** Two input files: valid_data/weather.csv & valid_data/hydrometric.csv
+
+**Expected Output:** A browser tab will open with a map of British Columbia as well points showing the location of matched weather and hydrometric stations. trace0 (red points) represent weather stations and trace1 (blue points) represent hydrometric stations. Feel free to zoom in and interact with the map, hover over points to view the station name as well as the latitude and longitude of the station.
+
+## Step6) Run _analysis.py_
+
+**Comand:** python analyis.py 0 (or another valid match key)
+
+**Expected Input:** A valid match key from the list provided after executing Step 4
+
+**Expected Output:** Train and test accuracy scores for a K-Neighbors Regressor Model for data of a given matched station pair.
+
