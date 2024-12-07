@@ -12,7 +12,10 @@ For this project, we explored the daily weather and hydrometric data in British 
    1. [Step 0) Install Python and Necessary Libraries](#step-0-install-python-and-necessary-libraries)
    2. [Step 1) Run _extract_weather_data.py_](#step-1-run-_extract_weather_datapy_)
    3. [Step 2) Run _clean_weather_data.py_](#step-2-run-_clean_weather_datapy_)
-   4. [Step 3) Run _clean_hydrometric_data.py_](#step-2-run-clean_hydrometric_datapy)
+   4. [Step 3) Run _clean_hydrometric_data.py_](#step-3-run-cleanhydrometricdatapy)
+   5. [Step 4) Run _match_stations.py_](#step-4-run-matchstationspy)
+   6. [Step 5) OPTIONAL Run _plot_stations.py_](#step-5-optional-run-plotstationspy)
+   7. [Step 6) Run _analysis.py_](#step-6-run-analysispy)
 
 ---
 
