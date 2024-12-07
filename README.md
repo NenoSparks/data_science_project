@@ -12,7 +12,7 @@ For this project, we explored the daily weather and hydrometric data in British 
    1. [Step 0) Install Python and Necessary Libraries](#step-0-install-python-and-necessary-libraries)
    2. [Step 1) Run _extract_weather_data.py_](#step-1-run-_extract_weather_datapy_)
    3. [Step 2) Run _clean_weather_data.py_](#step-2-run-_clean_weather_datapy_)
-   4. 
+   4. [Step 3) Run _clean_hydrometric_data.py_](#step-2-run-_clean_hydrometric_datapy_)
 
 ---
 
