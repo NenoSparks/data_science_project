@@ -36,11 +36,8 @@ def main():
     # remove row with null in "y"
     ml_data = ml_data.iloc[:-1]
 
-    
-
     # dont use random train test split, order matters, time series data
-    # X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.3, shuffle=False)
-    # TODO ideally, we can organize data by season, so we can predict based on station and season, but that would require
+    # ideally, we can organize data by season, so we can predict based on station and season, but that would require
     # a 40 year span to get the same amount of data points as we have now (which is already very few)
     train = ml_data[:3000]
     X_train = train[["TOTAL_RAIN","TOTAL_PRECIPITATION","MEAN_TEMPERATURE",

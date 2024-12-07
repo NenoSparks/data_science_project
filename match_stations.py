@@ -36,6 +36,7 @@ def main():
 
     h_stations = list(hstations_df.index)
     w_stations = list(wstations_df.index)
+
     # figure out which stations from each dataset correspond to one another
     # iterate over our hydrometric stations since there are fewer compared to weather stations
     for h_station in h_stations:
@@ -52,9 +53,6 @@ def main():
     # print(valid_h_stations)
     # print(valid_w_stations)
     assert len(valid_h_stations) == len(valid_w_stations)
-    # TODO create dictionary to convert weather station names to hydrometric station names
-    # then change all of the names in the clean weather station data and filter for any rows that
-    # aren't from the desired station
 
     # key values to match on 
     keys = np.arange(len(valid_h_stations))
@@ -67,17 +65,14 @@ def main():
     valid_weather_df = weather_df[weather_df["Station Name"].isin(valid_w_stations)]
     valid_station_df = hydrom_df[hydrom_df["Station Name"].isin(valid_h_stations)]
 
-    # TODO Need to be careful doing this since there are often more weather stations than hydro stations in a given
+    # Need to be careful doing this since there are often more weather stations than hydro stations in a given
     # area!
-    # valid_weather_df = valid_weather_df.replace({"STATION_NAME": weather_to_hydro_dict})
-
-    # TODO instead of changing the name of the weather station (less accurate, prone to compatability issues down the line)
+    
+    # Instead of changing the name of the weather station (less accurate, prone to compatability issues down the line)
     # just add a new column to each dataframe to signify how they should be matched up,
     # a 'key' value.
     valid_weather_df["match key"] = valid_weather_df["Station Name"].map(weather_to_match_key)
     valid_station_df["match key"] = valid_station_df["Station Name"].map(hydro_to_match_key)
-    # valid_weather_df = valid_weather_df.replace({"match key": weather_to_match_key})
-    # valid_station_df = valid_station_df.replace({"match key": hydro_to_match_key})
 
     # if directory /valid_data does not already exist, create it
     if not os.path.isdir("valid_data"):
