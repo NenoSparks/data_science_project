@@ -53,7 +53,7 @@ def main():
 
     model = make_pipeline(
         StandardScaler(),
-        PCA(6),
+        PCA(7),
         KNeighborsRegressor(n_neighbors=50, weights='distance')
     )
     model.fit(X_train, y_train)
