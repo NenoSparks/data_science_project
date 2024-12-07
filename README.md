@@ -81,7 +81,7 @@ The following Python libraries are required:
 
 **Expected Output:** Will output list of available match keys to the console.
 
-## Step 5) _OPTIONAL_ Run _plot_stations.py_
+### Step 5) _OPTIONAL_ Run _plot_stations.py_
 
 **Command:** python plot_stations.py valid_data/weather.csv valid_data/hydrometric.csv
 
@@ -89,7 +89,7 @@ The following Python libraries are required:
 
 **Expected Output:** A browser tab will open with a map of British Columbia as well points showing the location of matched weather and hydrometric stations. trace0 (red points) represent weather stations and trace1 (blue points) represent hydrometric stations. Feel free to zoom in and interact with the map, hover over points to view the station name as well as the latitude and longitude of the station.
 
-## Step6) Run _analysis.py_
+### Step6) Run _analysis.py_
 
 **Comand:** python analyis.py 0 (or another valid match key)
 
@@ -97,3 +97,15 @@ The following Python libraries are required:
 
 **Expected Output:** Train and test accuracy scores for a K-Neighbors Regressor Model for data of a given matched station pair.
 
+---
+
+### Extras
+
+Programs used to aid in the development of the above code:
+- _find_date_range.py_
+- _explore.ipynb_
+- _verify_date_fill.ipynb_
+
+Notebook used to create plots of data for use in report
+- _analysis.ipynb_
+---
