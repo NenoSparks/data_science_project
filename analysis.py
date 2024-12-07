@@ -43,10 +43,12 @@ def main():
     # TODO ideally, we can organize data by season, so we can predict based on station and season, but that would require
     # a 40 year span to get the same amount of data points as we have now (which is already very few)
     train = ml_data[:3000]
-    X_train = train[["TOTAL_RAIN","TOTAL_SNOW","SNOW_ON_GROUND","MEAN_TEMPERATURE","Daily Discharge","Daily Water Level"]]
+    X_train = train[["TOTAL_RAIN","TOTAL_PRECIPITATION","MEAN_TEMPERATURE",
+            "TOTAL_SNOW","MIN_TEMPERATURE","MAX_TEMPERATURE","SNOW_ON_GROUND","Daily Discharge","Daily Water Level"]]
     y_train = train["y"]
     valid = ml_data[3000:]
-    X_valid = valid[["TOTAL_RAIN","TOTAL_SNOW","SNOW_ON_GROUND","MEAN_TEMPERATURE","Daily Discharge","Daily Water Level"]]
+    X_valid = valid[["TOTAL_RAIN","TOTAL_PRECIPITATION","MEAN_TEMPERATURE",
+            "TOTAL_SNOW","MIN_TEMPERATURE","MAX_TEMPERATURE","SNOW_ON_GROUND","Daily Discharge","Daily Water Level"]]
     y_valid = valid["y"]
 
     model = make_pipeline(
