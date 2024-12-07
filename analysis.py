@@ -53,8 +53,8 @@ def main():
         KNeighborsRegressor(n_neighbors=1, weights='distance')
     )
     model.fit(X_train, y_train)
-    print(model.score(X_train, y_train))
-    print(model.score(X_valid, y_valid))
+    print("Train Score: ", model.score(X_train, y_train))
+    print("Test Score: ", model.score(X_valid, y_valid))
 
 
 
