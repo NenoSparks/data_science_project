@@ -16,6 +16,7 @@ For this project, we explored the daily weather and hydrometric data in British 
    5. [Step 4) Run _match_stations.py_](#step-4-run-matchstationspy)
    6. [Step 5) OPTIONAL Run _plot_stations.py_](#step-5-optional-run-plotstationspy)
    7. [Step 6) Run _analysis.py_](#step-6-run-analysispy)
+   8. [Extras](#extras)
 
 ---
 
