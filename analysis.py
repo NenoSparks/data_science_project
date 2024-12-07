@@ -17,7 +17,8 @@ def main():
     hydro_df = pd.read_csv("valid_data/hydrometric.csv")
 
     # get the subset we're interested in doing analysis on (in this case total rain and water level)
-    rain_data = weather_df[["Date","Station Name","TOTAL_RAIN","MEAN_TEMPERATURE","TOTAL_SNOW","SNOW_ON_GROUND","match key"]]
+    rain_data = weather_df[["Date","Station Name","TOTAL_RAIN","TOTAL_PRECIPITATION","MEAN_TEMPERATURE",
+            "TOTAL_SNOW","MIN_TEMPERATURE","MAX_TEMPERATURE","SNOW_ON_GROUND","match key"]]
     level_data = hydro_df[["Date","Station Name","Daily Discharge","Daily Water Level","match key"]]
 
     # get the data for a single matched station
@@ -26,7 +27,8 @@ def main():
 
     combine0 = rain_data_0.merge(level_data_0, on="Date")
 
-    ml_data = combine0[["Date","TOTAL_RAIN","TOTAL_SNOW","MEAN_TEMPERATURE","SNOW_ON_GROUND","Daily Discharge","Daily Water Level"]]
+    ml_data = combine0[["TOTAL_RAIN","TOTAL_PRECIPITATION","MEAN_TEMPERATURE",
+            "TOTAL_SNOW","MIN_TEMPERATURE","MAX_TEMPERATURE","SNOW_ON_GROUND","Daily Discharge","Daily Water Level"]]
     
     # get our labels
     ml_data["y"] = ml_data["Daily Water Level"].shift(-1)
@@ -49,8 +51,8 @@ def main():
 
     model = make_pipeline(
         StandardScaler(),
-        PCA(2),
-        KNeighborsRegressor(n_neighbors=1, weights='distance')
+        PCA(6),
+        KNeighborsRegressor(n_neighbors=50, weights='distance')
     )
     model.fit(X_train, y_train)
     print("Train Score: ", model.score(X_train, y_train))

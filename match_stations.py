@@ -34,16 +34,19 @@ def main():
     # names of valid hydrometric stations
     valid_h_stations = []
 
+    h_stations = list(hstations_df.index)
+    w_stations = list(wstations_df.index)
     # figure out which stations from each dataset correspond to one another
     # iterate over our hydrometric stations since there are fewer compared to weather stations
-    for h_station in hstations_df.index:
+    for h_station in h_stations:
         h = tuple(hstations_df.loc[h_station, ['Latitude','Longitude']].values)
-        for w_station in wstations_df.index:
+        for w_station in w_stations:
             w = tuple(wstations_df.loc[w_station, ['Latitude','Longitude']].values)
             if distance(h, w) < 8:
                 valid_h_stations.append(h_station)
                 valid_w_stations.append(w_station)
                 # once we find a single match per hydrometric station move onto the next one
+                w_stations.remove(w_station)
                 break
     
     # print(valid_h_stations)
