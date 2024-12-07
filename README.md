@@ -12,10 +12,10 @@ For this project, we explored the daily weather and hydrometric data in British 
    1. [Step 0) Install Python and Necessary Libraries](#step-0-install-python-and-necessary-libraries)
    2. [Step 1) Run _extract_weather_data.py_](#step-1-run-_extract_weather_datapy_)
    3. [Step 2) Run _clean_weather_data.py_](#step-2-run-_clean_weather_datapy_)
-   4. [Step 3) Run _clean_hydrometric_data.py_](#step-3-run-cleanhydrometricdatapy)
-   5. [Step 4) Run _match_stations.py_](#step-4-run-matchstationspy)
-   6. [Step 5) OPTIONAL Run _plot_stations.py_](#step-5-optional-run-plotstationspy)
-   7. [Step 6) Run _analysis.py_](#step-6-run-analysispy)
+   4. [Step 3) Run _clean_hydrometric_data.py_](#step-3-run-_clean_hydrometric_datapy_)
+   5. [Step 4) Run _match_stations.py_](#step-4-run-_match_stationspy_-)
+   6. [Step 5) OPTIONAL Run _plot_stations.py_](#step-5-_optional_-run-_plot_stationspy_)
+   7. [Step 6) Run _analysis.py_](#step-6-run-_analysispy_)
    8. [Extras](#extras)
 
 ---
@@ -90,9 +90,9 @@ The following Python libraries are required:
 
 **Expected Output:** A browser tab will open with a map of British Columbia as well points showing the location of matched weather and hydrometric stations. trace0 (red points) represent weather stations and trace1 (blue points) represent hydrometric stations. Feel free to zoom in and interact with the map, hover over points to view the station name as well as the latitude and longitude of the station.
 
-### Step6) Run _analysis.py_
+### Step 6) Run _analysis.py_
 
-**Comand:** python analyis.py 0 (or another valid match key)
+**Command:** python analysis.py 0 (or another valid match key)
 
 **Expected Input:** A valid match key from the list provided after executing Step 4
 
