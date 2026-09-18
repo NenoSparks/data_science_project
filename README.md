@@ -1,4 +1,4 @@
-Project Context:
+#Project Context:
 This project was completed as part of a academic assignment and was developed to fulfill the requirements of that course.
 
 The project was created collaboratively with [@ajytan](https://github.com/ajytan). The repository preserves the original project history so that contributions from each collaborator remain visible.
