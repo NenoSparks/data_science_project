@@ -3,6 +3,8 @@ This project was completed as part of a academic assignment and was developed to
 
 The project was created collaboratively with [@ajytan](https://github.com/ajytan). The repository preserves the original project history so that contributions from each collaborator remain visible.
 
+A PDF report providing a more detailed overview is available upon request. The report covers the project problem statement, data preparation and cleaning methodology, K-Nearest Neighbors regression analysis, identified limitations, retrospective findings, and individual contributor experience summaries.
+
 This copy is maintained on my Github profile for portfolio and demonstration purposes.
 
 # [CMPT353 Project] Predicting Future Floods in British Columbia
