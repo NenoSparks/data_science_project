@@ -33,8 +33,8 @@ For this project, we explored the daily weather and hydrometric data in British 
 
 ### Members
 
-- Amy Jia Ying Tan [301388738]
-- Christopher Halim [301365204]
+- Amy Jia Ying Tan 
+- Christopher Halim 
 
 ---
 
