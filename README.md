@@ -1,3 +1,10 @@
+Project Context:
+This project was completed as part of a academic assignment and was developed to fulfill the requirements of that course.
+
+The project was created collaboratively with [@ajytan](https://github.com/ajytan). The repository preserves the original project history so that contributions from each collaborator remain visible.
+
+This copy is maintained on my Github profile for portfolio and demonstration purposes.
+
 # [CMPT353 Project] Predicting Future Floods in British Columbia
 
 For this project, we explored the daily weather and hydrometric data in British Columbia (BC) in order to determine if there are any relationships between the two datasets that would help predict areas that would be susceptible to flooding.
